@@ -1,0 +1,67 @@
+# ==========================================
+# Byte-compiled / optimized / DLL files
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+node_modules/
+package-lock.json
+package.json
+
+# ==========================================
+# Caches and temporary files
+# ==========================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Virtual environments
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Lecture slides (keep local, do not push large PPTX to git)
+# ==========================================
+slides/*.pptx
+!slides/.gitkeep
+
+# ==========================================
+# Large Datasets (Do NOT commit to Git!)
+# ==========================================
+data/raw/*.csv
+data/raw/*.zip
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.pkl
+data/models/*.joblib
+data/models/*.pkl
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!reports/figures/.gitkeep
+
+# ==========================================
+# OS & IDE files
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# Microsoft Office lock files
+# ==========================================
+~$*
