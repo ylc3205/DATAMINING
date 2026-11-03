@@ -18,7 +18,9 @@
 | 1 | **Nguyễn Văn Hiển Vinh** | **B23DCVT461** | **Trưởng nhóm** — Data & Preprocessing Lead (EDA, Pipeline 3-Way Split, RobustScaler, PCA/t-SNE) | [@clytusnguyen](https://github.com/clytusnguyen) |
 | 2 | **Nguyễn Minh Hoàng** | **B23DCVT173** | **Kỹ sư Mô hình hóa** — Modeling & Evaluation Lead (iForest, LOF, OC-SVM, Threshold Moving, Cost Matrix) | [@hoangmelinh](https://github.com/hoangmelinh) |
 
-* **Kế hoạch Dự án & Đặc tả SRS V2 chi tiết:** Xem tại file [`KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx`](./KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx) hoặc [`KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md`](./KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md).
+* **Kế hoạch Dự án & Đặc tả SRS V2 chi tiết:** Xem tại thư mục [`docs/`](./docs/) với hai định dạng:
+  * File Word (.docx): [`docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx`](./docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx)
+  * File Markdown (.md): [`docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md`](./docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md)
 
 ---
 
@@ -77,10 +79,12 @@ DATAMINING/
 │   ├── preprocessor.py                 # Module tiền xử lý với RobustScaler
 │   ├── models.py                       # Wrapper 3 mô hình & hàm đảo dấu score chuẩn mực
 │   └── metrics.py                      # Hàm tính Precision, Recall, F1, AUPRC, Cost
+├── docs/
+│   ├── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx # Bản kế hoạch SRS Word nộp GV
+│   ├── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md   # Bản kế hoạch SRS Markdown
+│   └── README.md                       # Mục lục & tóm tắt tài liệu
 ├── reports/
 │   └── figures/                        # Nơi lưu biểu đồ xuất từ notebooks
-├── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.docx # Bản kế hoạch SRS Word nộp GV
-├── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.md   # Bản kế hoạch SRS Markdown
 ├── .gitignore                          # Bỏ qua data nặng, venv, cache, checkpoint
 ├── requirements.txt                    # Thư viện Python cần cài đặt
 └── README.md                           # Tài liệu hướng dẫn dự án
