@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (
     precision_score, recall_score, f1_score,
-    precision_recall_curve, auc, confusion_matrix
+    precision_recall_curve, average_precision_score, auc, confusion_matrix
 )
 from src.config import COST_FP, DEFAULT_COST_FN
 
@@ -24,20 +24,24 @@ def evaluate_threshold(y_true, scores, threshold):
     }
 
 def compute_auprc(y_true, continuous_scores):
-    """Compute AUPRC directly from continuous anomaly scores."""
+    """
+    Compute Average Precision (AP / AUPRC) directly from continuous anomaly scores.
+    Uses sklearn.metrics.average_precision_score to calculate the weighted mean of precisions,
+    avoiding trapezoidal interpolation optimism.
+    """
+    ap_score = average_precision_score(y_true, continuous_scores)
     precisions, recalls, thresholds = precision_recall_curve(y_true, continuous_scores)
-    auprc_val = auc(recalls, precisions)
-    return auprc_val, precisions, recalls, thresholds
+    return ap_score, precisions, recalls, thresholds
 
 def compute_cost(tp, fp, tn, fn, cost_fn=DEFAULT_COST_FN, cost_fp=COST_FP):
     """
-    Calculate Total Expected Business Cost:
+    Calculate Total Expected Business Cost (Research Simulation):
     Total_Cost = C_FN * FN + C_FP * FP
     """
     return (cost_fn * fn) + (cost_fp * fp)
 
 def find_optimal_cost_threshold(y_true, scores, cost_fn=DEFAULT_COST_FN, cost_fp=COST_FP, num_thresholds=200):
-    """Sweep thresholds across continuous score range to find minimum cost threshold tau*."""
+    """Sweep thresholds across continuous score range on Validation Set to find minimum cost threshold tau*."""
     q_low = np.percentile(scores, 50)
     q_high = np.percentile(scores, 99.9)
     thresholds = np.linspace(q_low, q_high, num_thresholds)
