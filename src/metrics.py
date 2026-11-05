@@ -65,14 +65,16 @@ def compute_auprc(y_true: np.ndarray, continuous_scores: np.ndarray):
     Tính diện tích dưới đường cong Precision-Recall (AUPRC / Average Precision)
     trực tiếp từ điểm số dị biệt liên tục (Continuous Anomaly Scores).
     
-    GIẢNG VIÊN HỎI: Tại sao dùng sklearn.metrics.average_precision_score mà không dùng 
+    GIẢNG VIÊN HỎI: Tại sao dùng sklearn.metrics.average_precision_score mà không dùng
                     hàm tích phân hình thang auc(recalls, precisions)?
     BẠN TRẢ LỜI (ĐẶC BIỆT CHÚ Ý THEO CHUẨN V2.1):
-    - Đường Precision-Recall không biến thiên tuyến tính giữa các điểm khảo sát.
-    - Phương pháp tích phân hình thang (Trapezoidal Rule) tuyến tính hóa các đoạn cong,
-      dẫn tới hiện tượng "Lạc quan hóa sai lệch" (Optimistic Bias), làm thổi phồng diện tích AUPRC!
+    - Average Precision (AP) và PR-AUC tính theo quy tắc hình thang (Trapezoidal Rule) là hai
+      cách tính xấp xỉ diện tích khác nhau trong không gian Precision-Recall.
+    - Đường Precision-Recall không biến thiên tuyến tính giữa các điểm khảo sát; phương pháp tích
+      phân hình thang tuyến tính hóa các đoạn nối, có xu hướng ước lượng lạc quan hơn ở các khoảng nhảy vọt.
     - Hàm `average_precision_score` tính toán tổng có trọng số của các mức Precision theo từng bước
-      nhảy thực tế của Recall: AP = Sum_n ((R_n - R_{n-1}) * P_n).
+      nhảy thực tế của Recall theo xấp xỉ bậc thang (Step Function / Rectangular Integration):
+      AP = Sum_n ((R_n - R_{n-1}) * P_n).
       Đây là phương pháp chuẩn xác khoa học được khuyến nghị bởi Davis & Goadrich (ICML 2006).
       
     GIẢNG VIÊN HỎI: Có cần Min-Max chuẩn hóa điểm số về đoạn [0, 1] trước khi tính AUPRC không?

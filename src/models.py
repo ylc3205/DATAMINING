@@ -78,10 +78,13 @@ def build_local_outlier_factor(
       
     GIẢNG VIÊN HỎI: Tại sao phải subsampling N = 25.000 dòng?
     BẠN TRẢ LỜI:
-    - Độ phức tạp không gian của LOF là O(N^2 * d) để lưu ma trận khoảng cách k-láng giềng.
-      Nếu dùng toàn bộ 199.000 dòng, dung lượng RAM cần thiết vượt quá 100GB -> Máy tính sẽ bị sập (OOM).
-      Lấy mẫu ngẫu nhiên có kiểm soát N = 25.000 (với seed 42) giúp mô hình chạy mượt mà trên RAM 16GB
-      mà vẫn bảo toàn đầy đủ hình dạng phân phối của lớp Normal.
+    - N = 25.000 mẫu là giới hạn thực nghiệm được nhóm lựa chọn có chủ đích để kiểm soát tài nguyên phần cứng,
+      không phải là giới hạn bắt buộc mang tính lý thuyết của thuật toán LOF.
+    - Về mặt độ phức tạp tính toán, thuật toán LOF cần tính và lưu ma trận khoảng cách k-láng giềng với
+      chi phí bộ nhớ O(N^2 * d). Nếu dùng toàn bộ 199.020 dòng Train trên một máy đơn, dung lượng RAM cần thiết
+      sẽ vượt quá 100GB dẫn đến tràn bộ nhớ (OOM).
+    - Subsampling N = 25.000 (với random seed 42) là giải pháp cân bằng thực nghiệm tối ưu, giúp mô hình
+      chạy mượt mà trên phần cứng máy tính cá nhân (RAM 16GB) mà vẫn bảo toàn đầy đủ hình dạng phân phối của lớp Normal.
     """
     return LocalOutlierFactor(
         n_neighbors=n_neighbors,

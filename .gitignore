@@ -40,8 +40,10 @@ slides/*.pptx
 data/raw/*.csv
 data/raw/*.zip
 data/processed/*.csv
+data/processed/*.csv.gz
 data/processed/*.parquet
 data/processed/*.pkl
+data/processed/*.npz
 data/models/*.joblib
 data/models/*.pkl
 
