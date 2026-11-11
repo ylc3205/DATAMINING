@@ -8,7 +8,7 @@
   * **Nguyễn Minh Hoàng (B23DCVT173)** — *Modeling & Evaluation Lead*
 * **Môi trường thực thi:** Python 3.12.10 (`.venv`), Windows 11, PowerShell
 * **Dataset:** `data/raw/creditcard.csv` (284,807 dòng, 31 cột, 0 missing, 1,081 duplicates)
-* **Ngày bắt đầu theo dõi:** 03/11/2026 | **Cập nhật lần cuối:** 03/11/2026
+* **Ngày bắt đầu theo dõi:** 03/11/2026 | **Cập nhật lần cuối:** 11/11/2026
 
 ---
 
@@ -20,7 +20,7 @@
 | **Phase 1 (Ngày 2–3)** | EDA Tổng quan, Phân tích Lệch lớp & Đặc trưng V1–V28 | Vinh (A) / Hoàng (C) | <span style="color:green">**DONE**</span> | Hoàn thành `01_eda_overview.ipynb` (16 cells có output) & 4 ảnh tại `reports/figures/`. |
 | **Phase 2 (Ngày 4)** | Pipeline Phân tầng 70/15/15 & Module Metrics AP | Vinh (A-Pipe) / Hoàng (A-Met) | <span style="color:green">**DONE**</span> | Hoàn thành `02_preprocessing_pipeline.ipynb` (15 cells), đóng gói `data/processed/` & xuất ảnh 05. |
 | **Phase 3 (Ngày 5–6)** | Mô hình 1: Isolation Forest & Tối ưu Ngưỡng | Hoàng (A) / Vinh (R) | <span style="color:green">**DONE**</span> | Hoàn thành `03_isolation_forest.ipynb` (17 cells Defense-Ready), Best Val AP=0.103518 (n=200, s=512), Tau*=0.656289 (F1=0.2282), Sensitivity Analysis (+0.0018 AP), xuất ảnh 06 & 07, lưu model & preprocessor joblib. |
-| **Phase 4 (Ngày 7)** | Mô hình 2: Local Outlier Factor (`novelty=True`) | Hoàng (A) / Vinh (R) | **TODO** | Giới hạn thực nghiệm $N_{\text{LOF}}=25,000$ kiểm soát tài nguyên RAM. |
+| **Phase 4 (Ngày 7)** | Mô hình 2: Local Outlier Factor (`novelty=True`) | Hoàng (A) / Vinh (R) | <span style="color:green">**DONE**</span> *(Ready for Git checkpoint)* | Hoàn thành `04_local_outlier_factor.ipynb` (20 cells Defense-Ready), lưu `train_indices_lof.npy` (25k), Best Val AP=0.564948 (`k=30`), $\tau^*=3.163276$ (F1=0.6667, P=0.7188, R=0.6216, TP=46, FP=18), Sensitivity Check A/B ($\Delta\text{AP}=+0.000003 / +0.000058$), xuất ảnh 08 & 09, model `lof_best.joblib` (11.83 MB) & reports Phase 4 *(Đã qua Independent Audit 11/11/2026)*. |
 | **Phase 5 (Ngày 8)** | Mô hình 3: One-Class SVM (Kernel RBF) | Hoàng (A) / Vinh (C) | **TODO** | Subsampling $N_{\text{OCSVM}}=20,000$ kiểm soát QP solver. |
 | **Phase 6 (Ngày 9–10)**| Chuẩn hóa Score, Đối sánh Val & Cost Matrix | Hoàng (A) / Vinh (R) | **TODO** | Đảo dấu $S=-\text{score}$, AP (`average_precision_score`), chốt $\tau^*$. |
 | **Phase 7 (Ngày 11)** | Trực quan hóa Giảm chiều (PCA & t-SNE trên Val) | Vinh (A-PCA) / Hoàng (A-tSNE)| **TODO** | Tuyệt đối niêm phong Test Set; chỉ chạy trên Validation Set. |
@@ -67,8 +67,8 @@
 | Task ID | Tên nhiệm vụ | Owner (RACI) | Trạng thái | Sản phẩm bàn giao (Deliverable) | Tiêu chí nghiệm thu (Acceptance Criteria) | Bằng chứng kiểm thử (Evidence / Test Command) |
 | :---: | :--- | :---: | :---: | :--- | :--- | :--- |
 | **T3.1** | Khôi phục Preprocessor Artifact & Metadata | Vinh (A) | **DONE** | `data/processed/preprocessor.joblib`, `pipeline_metadata.json` | Fit trên Train_Normal, bảo toàn schema 30 đặc trưng, lưu đầy đủ center_/scale_. | `joblib.load('data/processed/preprocessor.joblib')` PASS |
-| **T3.2** | Huấn luyện Baseline Isolation Forest | Hoàng (A) | **DONE** | Notebook `03_isolation_forest.ipynb` (Cell 3-4) | 100 cây, max_samples=256, fit_time=0.43s, đảo dấu $S=-\text{score}$, Baseline Val AP = 0.093634. | `average_precision_score` tính đúng chuẩn |
-| **T3.3** | Khảo sát Tham số Contamination | Hoàng (A) | **DONE** | Notebook `03_isolation_forest.ipynb` (Cell 5-6) | Thử nghiệm 4 mức (auto, 0.0017, 0.01, 0.05); chứng minh AP bất biến 100%, offset_ dịch chuyển. | Bảng so sánh thực nghiệm trong notebook |
+| **T3.2** | Huấn luyện Baseline Isolation Forest | Hoàng (A) | **DONE** | Notebook `03_isolation_forest.ipynb` (Cell 5-6) | 100 cây, max_samples=256, fit_time=0.43s, đảo dấu $S=-\text{score}$, Baseline Val AP = 0.093634. | `average_precision_score` tính đúng chuẩn |
+| **T3.3** | Khảo sát Tham số Contamination | Hoàng (A) | **DONE** | Notebook `03_isolation_forest.ipynb` (Cell 7-8) | Thử nghiệm 4 mức (auto, 0.0017, 0.01, 0.05); chứng minh AP bất biến 100%, offset_ dịch chuyển. | Bảng so sánh thực nghiệm trong notebook |
 | **T3.4** | Grid Search Siêu tham số trên Validation | Hoàng (A) | **DONE** | `reports/phase3_isolation_forest_results.csv` | Lưới 8 cấu hình ($n \in [50, 100, 150, 200], s \in [256, 512]$), chọn Best Model ($n=200, s=512$, Val AP = 0.103518). | CSV lưu đầy đủ 8 cấu hình và runtime |
 | **T3.5** | Quét Ngưỡng Tối ưu $F_1$ & Xuất Biểu đồ | Hoàng (A) | **DONE** | `reports/figures/06_...png`, `07_...png` | Quét $\tau^* = 0.656289$, Best F1 = 0.2282 (P=0.2267, R=0.2297). Xuất đủ 2 biểu đồ PNG chuẩn 300 DPI. | `PIL.Image.verify()` PASS |
 | **T3.6** | Duplicate Sensitivity Analysis | Vinh (A) | **DONE** | Báo cáo thực nghiệm trong notebook & summary | Cô lập 203 bản ghi trùng; đo đạc $\Delta\text{AP} = +0.001837$, $\Delta\text{Precision} = +0.003063$, $\Delta\text{Recall} = 0.000000$. | Bảng đối chiếu thực nghiệm không re-train |
@@ -76,8 +76,21 @@
 
 ---
 
-### Phase 4 đến Phase 9: Các Mô hình Tiếp theo, Benchmark & Báo cáo
-*(Chi tiết các task T4.1 đến T9.3 được theo dõi tiếp tục khi hoàn thành Phase 3)*
+### Phase 4: Huấn luyện, Tối ưu & Đánh giá Local Outlier Factor (Ngày 7)
+| Task ID | Tên nhiệm vụ | Owner (RACI) | Trạng thái | Sản phẩm bàn giao (Deliverable) | Tiêu chí nghiệm thu (Acceptance Criteria) | Bằng chứng kiểm thử (Evidence / Test Command) |
+| :---: | :--- | :---: | :---: | :--- | :--- | :--- |
+| **T4.1** | Lấy mẫu Kiểm soát 25,000 `Train_Normal` | Vinh (A) | **DONE** | `data/processed/train_indices_lof.npy` | Sampling không hoàn lại (`RandomState=42`), 25,000 index duy nhất, 0 Fraud, tải lại khớp 100%. | `np.load` + `assert np.array_equal` PASS |
+| **T4.2** | Baseline LOF (`novelty=True`) & Batch Test | Hoàng (A) | **DONE** | `04_local_outlier_factor.ipynb` (EXP 4.0) | `n_neighbors=20`, `minkowski p=2`, đảo dấu score, batch=5000 khớp nguyên khối (`atol=1e-12`), Val AP = 0.550848. | Output Cell 9 & assertion PASS |
+| **T4.3** | Coarse Grid Search `n_neighbors` | Hoàng (A) | **DONE** | `reports/phase4_lof_results.csv` | Quét `[10, 20, 30, 50]` trên cùng 25k mẫu (tái sử dụng `k=20`), chọn Best Model `k=30` (`Val AP=0.564948`, fit 3.90s, score 9.26s). | CSV 4 dòng + `phase4_lof_metadata.json` |
+| **T4.4** | Quét Ngưỡng $\tau^*$ & Biểu đồ 300 DPI | Hoàng (A) | **DONE** | `reports/figures/08_lof_score_distribution.png`, `09_lof_pr_curve.png` | Tại $\tau^*=3.163276$: `P=0.7188`, `R=0.6216`, `F1=0.6667`, `TP=46, FP=18, TN=42629, FN=28`. Ảnh 300 DPI rõ nét. | `PIL.Image.verify()` & `dpi=(300,300)` PASS |
+| **T4.5** | Duplicate Sensitivity Analysis (Check A & B) | Vinh (A) | **DONE** | Báo cáo bảng Check A/B trong notebook & summary | Cô lập 45 dòng (Check A, $\Delta\text{AP}=+0.000003$) và 203 dòng (Check B, $\Delta\text{AP}=+0.000058$), 0 Fraud, $\Delta F_1=0.0000$. | Không refit & giữ nguyên $\tau^*$ PASS |
+| **T4.6** | Tuần tự hóa Mô hình & Báo cáo Phase 4 | Hoàng (A) | **DONE** | `models/lof_best.joblib`, `reports/phase4_lof_summary.md`, `phase4_lof_metadata.json` | File `11.83 MB`, reload `joblib.load()` khớp bit-for-bit (`np.array_equal`), Zero Test Access. | Kiểm thử trên 497 mẫu đầu & đuôi PASS |
+| **T4.7** | Tài liệu Defense-Ready & Đồng bộ Docs | Hoàng / Vinh | **DONE** | `04_local_outlier_factor.ipynb` (5 phần A–E), `README.md`, `IMPLEMENTATION_TRACKER.md` | Chạy sạch `nbconvert --execute`, đủ 12 Q&A phản biện và cập nhật sai lệch phân chia/môi trường trong README. | Restart & Run All PASS (exit code 0) |
+
+---
+
+### Phase 5 đến Phase 9: Các Mô hình Tiếp theo, Benchmark & Báo cáo
+*(Chi tiết các task T5.1 đến T9.3 được theo dõi tiếp tục khi triển khai từng Phase tiếp theo)*
 
 ---
 
