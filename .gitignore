@@ -29,13 +29,16 @@ env.bak/
 venv.bak/
 
 # ==========================================
-# Lecture slides (keep local, do not push large PPTX to git)
+# Lecture slides & internal docs (keep local)
 # ==========================================
 slides/*.pptx
+slides/*.pdf
 !slides/.gitkeep
+docs/*
+!docs/.gitkeep
 
 # ==========================================
-# Large Datasets (Do NOT commit to Git!)
+# Large Datasets & Reproducible Artifacts (Do NOT commit to Git!)
 # ==========================================
 data/raw/*.csv
 data/raw/*.zip
@@ -44,12 +47,21 @@ data/processed/*.csv.gz
 data/processed/*.parquet
 data/processed/*.pkl
 data/processed/*.npz
-data/models/*.joblib
-data/models/*.pkl
+data/processed/*.joblib
+data/processed/*.json
+models/*.joblib
+models/*.pkl
+reports/*.csv
+reports/*.json
+reports/*.md
+reports/figures/*.png
 
-# Keep directory structure
+# Keep directory structure & small reproducibility indices
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/processed/train_indices_*.npy
+!models/.gitkeep
+!reports/.gitkeep
 !reports/figures/.gitkeep
 
 # ==========================================

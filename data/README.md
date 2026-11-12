@@ -3,7 +3,7 @@
 Thư mục này dùng để lưu trữ dữ liệu thực nghiệm theo quy chuẩn quản lý dữ liệu khoa học:
 
 - `data/raw/`: Chứa file dữ liệu gốc `creditcard.csv` tải về từ Kaggle. File này được đưa vào `.gitignore` để tránh đẩy dữ liệu lớn (>150MB) lên GitHub.
-- `data/processed/`: Chứa dữ liệu sau khi thực hiện phân chia 3 tập (`train_normal.parquet`, `val.parquet`, `test.parquet`) và sau khi chuẩn hóa bằng `RobustScaler`.
+- `data/processed/`: Chứa dữ liệu sau phân chia 3 tập và chuẩn hóa bằng `RobustScaler` do Phase 2 tạo ra (`creditcard_preprocessed.npz`, `train_normal.csv.gz`, `val.csv.gz`, `test.csv.gz`, `preprocessor.joblib` — giữ local/gitignore) cùng các file chỉ số lấy mẫu tái lập nhỏ (`train_indices_*.npy` — giữ trên GitHub).
 
 ## Hướng dẫn tải tập dữ liệu Kaggle:
 

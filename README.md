@@ -18,9 +18,7 @@
 | 1 | **Nguyễn Văn Hiển Vinh** | **B23DCVT461** | **Trưởng nhóm** — Data & Preprocessing Lead (EDA, Pipeline 3-Way Split, RobustScaler, PCA/t-SNE) | [@clytusnguyen](https://github.com/clytusnguyen) |
 | 2 | **Nguyễn Minh Hoàng** | **B23DCVT173** | **Kỹ sư Mô hình hóa** — Modeling & Evaluation Lead (iForest, LOF, OC-SVM, Threshold Moving, Cost Matrix) | [@hoangmelinh](https://github.com/hoangmelinh) |
 
-* **Kế hoạch Dự án & Đặc tả SRS V2 chi tiết:** Xem tại thư mục [`docs/`](./docs/) với hai định dạng:
-  * File Word (.docx): [`docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.docx`](./docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.docx)
-  * File Markdown (.md): [`docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.md`](./docs/KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.md)
+* **Tài liệu Kế hoạch & Theo dõi nội bộ:** Lưu tại thư mục `docs/` ở máy cục bộ (không đẩy lên GitHub theo chính sách repository tối giản).
 
 ---
 
@@ -62,7 +60,7 @@ DATAMINING/
 │   └── pull_request_template.md        # Template chuẩn khi tạo Pull Request
 ├── data/
 │   ├── raw/                            # Chứa file creditcard.csv gốc (gitignore)
-│   ├── processed/                      # Chứa dữ liệu sau phân chia & scale (gitignore)
+│   ├── processed/                      # Lưu train_indices_*.npy; .npz/.csv.gz/.joblib giữ local (gitignore)
 │   └── README.md                       # Hướng dẫn tải dữ liệu từ Kaggle
 ├── notebooks/
 │   ├── 01_eda_overview.ipynb           # Khám phá phân phối, lệch lớp, KDE V1-V28
@@ -71,7 +69,7 @@ DATAMINING/
 │   ├── 04_local_outlier_factor.ipynb   # Lấy mẫu N=25k, LOF novelty=True, n_neighbors
 │   ├── 05_one_class_svm.ipynb          # Lấy mẫu N=20k, One-Class SVM RBF, nu, gamma
 │   ├── 06_threshold_tuning_cost.ipynb  # Đối sánh PR-Curve, dịch chuyển ngưỡng & Cost Matrix
-│   └── 07_dimensionality_reduction.ipynb # Trực quan hóa PCA 2D/3D & t-SNE (tô màu kép)
+│   └── 07_dimensionality_reduction.ipynb # Trực quan hóa PCA 2D/3D & t-SNE trên Validation
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                       # Cấu hình đường dẫn, seed 42, tham số sampling
@@ -79,13 +77,11 @@ DATAMINING/
 │   ├── preprocessor.py                 # Module tiền xử lý với RobustScaler
 │   ├── models.py                       # Wrapper 3 mô hình & hàm đảo dấu score chuẩn mực
 │   └── metrics.py                      # Hàm tính Precision, Recall, F1, AUPRC, Cost
-├── docs/
-│   ├── IMPLEMENTATION_TRACKER.md       # Bảng theo dõi tiến độ từng Phase & Task
-│   ├── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.docx # Bản kế hoạch SRS Word nộp GV
-│   └── KE_HOACH_DU_AN_CREDIT_CARD_FRAUD_DETECTION_V2.1.md   # Bản kế hoạch SRS Markdown
-├── models/                             # Mô hình đã huấn luyện (.joblib) qua từng Phase
+├── docs/                               # Tài liệu kế hoạch/tracker nội bộ (giữ local, gitignore)
+├── models/                             # Mô hình đã huấn luyện (.joblib) tái tạo cục bộ (gitignore)
 ├── reports/
-│   └── figures/                        # Nơi lưu biểu đồ xuất từ notebooks
+│   └── figures/                        # Báo cáo CSV/JSON/MD & biểu đồ PNG tái tạo cục bộ (gitignore)
+├── slides/                             # Slide thuyết trình/bài giảng (giữ local, gitignore)
 ├── .gitignore                          # Bỏ qua data nặng, venv, cache, checkpoint
 ├── requirements.txt                    # Thư viện Python cần cài đặt
 └── README.md                           # Tài liệu hướng dẫn dự án
@@ -123,7 +119,7 @@ pip install -r requirements.txt
 ```bash
 jupyter lab
 ```
-Khởi chạy lần lượt các Notebook từ `01_eda_overview.ipynb` đến `07_dimensionality_reduction.ipynb`. Mọi bước đều đã cố định `random_state = 42` để đảm bảo kết quả trùng khớp 100%.
+Khởi chạy lần lượt các Notebook từ `01_eda_overview.ipynb` đến `07_dimensionality_reduction.ipynb`. Mọi bước đều đã cố định `random_state = 42` để đảm bảo kết quả trùng khớp 100%, đồng thời tự động tái tạo các file dữ liệu xử lý (`.npz`/`.csv.gz`/`.joblib`), mô hình (`models/*.joblib`), báo cáo và biểu đồ (`reports/`) ngay trên máy cục bộ.
 
 ---
 

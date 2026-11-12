@@ -20,7 +20,7 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.svm import OneClassSVM
-from src.config import RANDOM_STATE, LOF_SAMPLE_SIZE, OCSVM_SAMPLE_SIZE
+from src.config import RANDOM_STATE
 
 
 def build_isolation_forest(
@@ -98,7 +98,7 @@ def build_local_outlier_factor(
 def build_one_class_svm(
     kernel: str = "rbf",
     nu: float = 0.01,
-    gamma: str = "scale"
+    gamma: str | float = "scale"
 ) -> OneClassSVM:
     """
     Khởi tạo mô hình One-Class SVM (Support Vector Machine một lớp).

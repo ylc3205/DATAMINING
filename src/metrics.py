@@ -15,7 +15,6 @@ NGƯỜI PHỤ TRÁCH:
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.metrics import (
     precision_score, recall_score, f1_score,
     precision_recall_curve, average_precision_score, confusion_matrix

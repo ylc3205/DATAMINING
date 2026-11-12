@@ -1,5 +1,0 @@
-model_id,n_neighbors,sample_size,novelty,metric,p,contamination,effective_metric,fit_method,fit_time_sec,score_time_sec,total_time_sec,rss_before_mb,rss_after_fit_mb,rss_after_score_mb,rss_delta_mb,tracemalloc_peak_mb,peak_wset_mb,val_ap,optimal_threshold,val_precision,val_recall,val_f1,tp,fp,tn,fn,status
-1,10,25000,True,minkowski,2,auto,euclidean,brute,3.8315,7.3569,11.1884,265.9141,269.3789,267.3672,1.4531,8.4954,276.875,0.301756,3.046908,0.414141,0.554054,0.473988,41,58,42589,33,COMPLETED
-2,20,25000,True,minkowski,2,auto,euclidean,brute,3.7972,7.2257,11.0229,257.3711,265.0508,262.5664,5.1953,16.5605,276.875,0.550848,3.124853,0.676471,0.621622,0.647887,46,22,42625,28,COMPLETED_REUSED_BASELINE
-3,30,25000,True,minkowski,2,auto,euclidean,brute,3.8972,9.2551,13.1523,270.2891,274.5469,275.5352,5.2461,24.2303,291.7266,0.564948,3.163276,0.71875,0.621622,0.666667,46,18,42629,28,COMPLETED
-4,50,25000,True,minkowski,2,auto,euclidean,brute,3.8426,7.8219,11.6645,277.8242,285.0273,286.3633,8.5391,39.9655,314.8711,0.554866,3.039701,0.676471,0.621622,0.647887,46,22,42625,28,COMPLETED
