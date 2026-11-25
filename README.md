@@ -1,154 +1,136 @@
-# Credit Card Fraud Detection (Unsupervised Anomaly Detection)
+# Phát hiện Gian lận Thẻ tín dụng bằng Học Không Giám Sát (Credit Card Fraud Detection — Unsupervised Anomaly Detection)
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3%2B-orange.svg)](https://scikit-learn.org/)
-[![Course](https://img.shields.io/badge/Course-Data%20Mining%20(PTIT)-red.svg)](#)
-[![Status](https://img.shields.io/badge/Status-Sprint%2014%20Days-green.svg)](#)
+[![Python](https://img.shields.io/badge/Python-3.12.10-blue.svg)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.x-orange.svg)](https://scikit-learn.org/)
+[![Status](https://img.shields.io/badge/Status-Phases%200--8%20Complete-brightgreen.svg)](#ti%E1%BA%BFn-%C4%91%E1%BB%99-tri%E1%BB%83n-khai--notebooks)
 
-> **Đồ án Bài tập lớn môn học:** Khai phá Dữ liệu (Data Mining) — Học viện Công nghệ Bưu chính Viễn thông (PTIT)  
-> **Chủ đề IV:** Anomaly / Outlier Detection (Phát hiện dị biệt)  
-> **Đề tài số 13:** Credit Card Fraud Detection  
-
----
-
-## 👥 Nhóm Sinh viên Thực hiện
-
-| STT | Họ và Tên | Mã Sinh Viên | Vai trò & Trách nhiệm chính | GitHub |
-|:---:|:---|:---:|:---|:---:|
-| 1 | **Nguyễn Văn Hiển Vinh** | **B23DCVT461** | **Trưởng nhóm** — Data & Preprocessing Lead (EDA, Pipeline 3-Way Split, RobustScaler, PCA/t-SNE) | [@clytusnguyen](https://github.com/clytusnguyen) |
-| 2 | **Nguyễn Minh Hoàng** | **B23DCVT173** | **Kỹ sư Mô hình hóa** — Modeling & Evaluation Lead (iForest, LOF, OC-SVM, Threshold Moving, Cost Matrix) | [@hoangmelinh](https://github.com/hoangmelinh) |
-
-* **Tài liệu Kế hoạch & Theo dõi nội bộ:** Lưu tại thư mục `docs/` ở máy cục bộ (không đẩy lên GitHub theo chính sách repository tối giản).
+* **Repository:** [https://github.com/ylc3205/DATAMINING.git](https://github.com/ylc3205/DATAMINING.git)
+* **Học phần:** Khai phá Dữ liệu (Data Mining) — Học viện Công nghệ Bưu chính Viễn thông (PTIT)
+* **Nhóm thực hiện:**
+  * **Nguyễn Văn Hiển Vinh** (`B23DCVT461`)
+  * **Nguyễn Minh Hoàng** (`B23DCVT173`)
 
 ---
 
-## 🎯 Bối cảnh Bài toán & Tuyên bố Phạm vi (Scope)
+## 1. Tổng quan Đề tài & Động lực Nghiên cứu
 
-* **Bản chất nghiệp vụ:** Trong thanh toán ngân hàng, các thủ đoạn gian lận thẻ tín dụng liên tục thay đổi (Zero-day Fraud). Nếu sử dụng phương pháp Học có giám sát (Supervised) kết hợp SMOTE, mô hình dễ bị rập khuôn theo các nhãn cũ và sinh mẫu giả mạo trong không gian 30 chiều.
-* **Hướng tiếp cận chuẩn mực:** Áp dụng **Học không giám sát (Unsupervised Anomaly Detection)** để học cấu trúc của các giao dịch bình thường (Nominal Data). Mọi giao dịch bất thường nằm ở vùng mật độ thấp, khoảng cách xa lạ hoặc dễ bị cô lập đều tự động bị gắn cờ dị biệt.
-* **Ranh giới đồ án:** Dự án tập trung 100% vào nghiên cứu học thuật, đối sánh thực nghiệm 3 thuật toán không giám sát và phân tích chi phí kinh tế (Cost-sensitive analysis). Dự án **không** mở rộng làm Web/App/Dashboard thương mại.
+Trong giao dịch thanh toán thẻ tín dụng, tỷ lệ gian lận thực tế rất thấp (mất cân bằng lớp cực đoan) và hành vi gian lận thay đổi liên tục theo thời gian. Đề tài tiếp cận bài toán dưới góc độ **Phát hiện Dị biệt Không giám sát (Unsupervised Novelty Detection)**:
 
----
-
-## 📊 Tập Dữ liệu (Dataset) & Chiến lược Chia 3 Tập Chống Rò rỉ
-
-Dataset gốc: **Kaggle Credit Card Fraud Detection** ([Link Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)) gồm **284,807 giao dịch** (284,315 Normal vs. 492 Fraud ~ 0.172%), 30 thuộc tính đầu vào (Time, Amount, V1–V28) và 1 nhãn Class.
-
-### Quy trình Phân chia 3 Tập Chống Rò rỉ (Zero-Leakage 3-Way Split):
-* **Training Set (Huấn luyện):** Gồm **199,020 giao dịch** (100% Class 0 - Normal, **0 Fraud**). Nhãn Class bị loại bỏ hoàn toàn trong quá trình fit.
-* **Validation Set (Kiểm định):** Gồm **42,721 giao dịch** (42,647 Normal + 74 Fraud ~ 0.1732%). Dùng để tinh chỉnh siêu tham số và thực hiện kỹ thuật Dịch chuyển ngưỡng (Threshold-Moving).
-* **Test Set (Kiểm thử độc lập):** Gồm **42,722 giao dịch** (42,648 Normal + 74 Fraud ~ 0.1732%). Tuyệt đối niêm phong trong suốt quá trình thử nghiệm, chỉ mở ra ở bước nghiệm thu cuối cùng.
-* **Tiền xử lý:** Áp dụng `RobustScaler` trên thuộc tính `Amount` và `Time` (sử dụng Median & IQR). **Fit duy nhất trên Training set**, chỉ transform trên Validation và Test set.
+1. **Huấn luyện thuần túy trên dữ liệu giao dịch bình thường (`Train_Normal`)**, tách bỏ hoàn toàn nhãn gian lận khỏi tập huấn luyện để mô hình tự học biên phân phối hành vi hợp lệ.
+2. **Thiết kế pipeline chống rò rỉ dữ liệu tuyệt đối (Zero Data Leakage)**:
+   * Chuẩn hóa `RobustScaler` (`Time`, `Amount`) chỉ `fit` trên `Train_Normal`.
+   * Toàn bộ chọn siêu tham số, chuẩn hóa điểm dị biệt $S(x) = -\text{score\_samples}(x)$, đối sánh mô hình, tối ưu ngưỡng cắt chính xác $O(N \log N)$ và phân tích trực quan hóa PCA/t-SNE được thực hiện trên **Validation Set**.
+   * **Test Set** được niêm phong hoàn toàn trong suốt Phases 1–7 và chỉ mở **01 lần duy nhất** tại Phase 8 để nghiệm thu bằng các mô hình và ngưỡng cắt đã đóng băng.
+3. **Đánh giá gắn với Ma trận Chi phí Bất đối xứng**: Sử dụng **Average Precision (AUPRC)** thay cho Accuracy bị sai lệch khi mất cân bằng lớp, kết hợp tối ưu ngưỡng cắt theo **đơn vị chi phí tương đối** ($C_{\text{FP}} = 1$, $C_{\text{FN}} = 30$) kèm phân tích độ nhạy ở 5 tỷ lệ (`10:1`, `20:1`, `30:1`, `50:1`, `100:1`).
 
 ---
 
-## 🤖 3 Thuật toán Không giám sát & Chuẩn hóa Điểm Dị biệt
+## 2. Bộ dữ liệu & Quy trình Tiền xử lý (`creditcard.csv`)
 
-| Thuật toán | Cơ chế Hoạt động | Cấu hình & Chiến lược Lấy mẫu | Hàm tính Score Scikit-learn | Quy ước Điểm Dị biệt Thống nhất ($S$) |
-|:---|:---|:---|:---|:---|
-| **Isolation Forest (iForest)** | Phân cắt nhị phân ngẫu nhiên, cô lập điểm dị biệt nhanh ở độ sâu nhỏ | Huấn luyện trên toàn bộ 199,020 mẫu `Train_Normal`; `max_samples = 256`, `n_estimators = 100` | `score_samples(X)` *(mặc định âm)* | $S = -\text{score\_samples}(X)$<br>**(Score càng cao $\rightarrow$ Dị biệt càng lớn)** |
-| **Local Outlier Factor (LOF)** | Đo lường tỷ số mật độ cục bộ so với $k$ lân cận gần nhất | Bắt buộc bật `novelty=True`. Lấy mẫu đại diện $N_{\text{LOF}} = 25,000$ từ `Train_Normal` để tránh tràn RAM $O(N^2)$ | `score_samples(X)` *(mặc định âm)* | $S = -\text{score\_samples}(X)$<br>**(Score càng cao $\rightarrow$ Dị biệt càng lớn)** |
-| **One-Class SVM** | Tìm siêu phẳng tối ưu phân tách dữ liệu khỏi gốc tọa độ trong không gian RBF | Kernel RBF (`nu=0.01`, `gamma='scale'`). Lấy mẫu đại diện $N_{\text{OCSVM}} = 20,000$ từ `Train_Normal` | `decision_function(X)` *(mặc định âm ngoài biên)* | $S = -\text{decision\_function}(X)$<br>**(Score càng cao $\rightarrow$ Dị biệt càng lớn)** |
+* **Nguồn dữ liệu:** Kaggle Credit Card Fraud Detection (`284,807` giao dịch thẻ tín dụng tại châu Âu trong 2 ngày tháng 9/2013; `31` cột: `Time`, `V1`–`V28` từ PCA, `Amount`, `Class`).
+* **Tính toàn vẹn & Trùng lặp:** `0` giá trị thiếu (`NaN`). Toàn bộ `1,081` bản ghi trùng lặp chính xác (gồm `1,062` Normal và `19` Fraud — chiếm `3.86%` tổng số Fraud) được **giữ lại có chủ đích** để không làm mất mẫu gian lận thực tế và được kiểm chứng bằng *Duplicate Sensitivity Analysis*.
+* **Phân chia phân tầng 70 / 15 / 15 (`RANDOM_STATE = 42`):**
+
+| Phân vùng | Tổng mẫu | Giao dịch Bình thường (`Class=0`) | Gian lận (`Class=1`) | Tỷ lệ Gian lận | Vai trò |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| **`Train_Normal`** | `199,020` | `199,020` | `0` *(đã tách `344` Fraud)* | `0.0000%` | Huấn luyện 3 thuật toán không giám sát & fit `RobustScaler` |
+| **`Validation`** | `42,721` | `42,647` | `74` | `0.1732%` | Tuning siêu tham số, đối sánh mô hình, tìm $\tau^*$ & PCA/t-SNE |
+| **`Test` (Niêm phong)** | `42,722` | `42,648` | `74` | `0.1732%` | Nghiệm thu độc lập 01 lần duy nhất ở Phase 8 |
+| **Toàn bộ gốc** | `284,807` | `284,315` | `492` | `0.1727%` | — |
 
 ---
 
-## 📁 Cấu trúc Thư mục Dự án (Project Directory Structure)
+## 3. Ba Thuật toán Không giám sát & Thiết kế Thực nghiệm
+
+Cả ba mô hình đều quy về **điểm dị biệt thống nhất** qua hàm `compute_unified_anomaly_scores()` trong [`src/models.py`](file:///c:/Users/Vinh%20Nguyen/DATAMINING/src/models.py):
+$$S(x) = -\text{score\_samples}(x) \quad (\text{điểm càng lớn} \Rightarrow \text{mức độ bất thường càng cao})$$
+
+1. **Isolation Forest** (`models/isolation_forest_best.joblib`, `2.41 MB`): Huấn luyện trên toàn bộ `199,020` mẫu `Train_Normal`; cấu hình tối ưu trên Validation: `n_estimators=200`, `max_samples=512`.
+2. **Local Outlier Factor — `novelty=True`** (`models/lof_best.joblib`, `11.83 MB`): Lấy mẫu kiểm soát `25,000` giao dịch từ `Train_Normal` (`data/processed/train_indices_lof.npy`, `RandomState=42`); cấu hình tối ưu: `n_neighbors=30`, `metric='minkowski' (p=2)`.
+3. **One-Class SVM — RBF Kernel** (`models/ocsvm_best.joblib`, `0.06 MB`): Lấy mẫu kiểm soát `20,000` giao dịch từ `Train_Normal` (`data/processed/train_indices_ocsvm.npy`, `RandomState=42`); cấu hình tối ưu: `kernel='rbf'`, `nu=0.01`, `gamma=0.01` (`251` support vectors).
+
+---
+
+## 4. Kết quả Thực nghiệm Chính thức (Validation & Final Test)
+
+* **Chính sách chọn Champion (đóng băng tại Phase 6):** Chọn mô hình có **tổng chi phí Validation thấp nhất** tại tỷ lệ chính $C_{\text{FP}} = 1, C_{\text{FN}} = 30$ (đơn vị chi phí tương đối). Ngưỡng $\tau^*$ được tính chính xác không làm tròn bằng thuật toán $O(N \log N)$ gom nhóm điểm trùng nhau (`find_optimal_cost_threshold_exact` trong [`src/metrics.py`](file:///c:/Users/Vinh%20Nguyen/DATAMINING/src/metrics.py)).
+* **Mô hình Quán quân (Champion):** **Local Outlier Factor (LOF)** với ngưỡng đóng băng $\tau^* = 2.4462849810364786$.
+
+### Bảng 1: Hiệu năng trên Tập Validation (`42,721` mẫu, `74` Fraud)
+
+| Mô hình | Val AP (AUPRC) | Val ROC-AUC | $\tau^*_{\text{Cost}}$ (`30:1`) | TP / FP / FN / TN | Precision | Recall | F1-Score | Tổng chi phí (`30:1`, đơn vị) | Latency Val (ms/tx) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Local Outlier Factor (Champion)** | **0.5649** | 0.9402 | `2.446285` | `54 / 60 / 20 / 42,587` | **0.4737** | 0.7297 | **0.5745** | **660.0** | `0.0817` |
+| **One-Class SVM** | 0.2515 | 0.9006 | `1.407521` | `57 / 195 / 17 / 42,452` | 0.2262 | **0.7703** | 0.3497 | 705.0 | `0.0285` |
+| **Isolation Forest** | 0.1035 | **0.9434** | `0.560519` | `46 / 447 / 28 / 42,200` | 0.0933 | 0.6216 | 0.1623 | 1287.0 | **0.0149** |
+
+> *Ghi chú phân tích độ nhạy chi phí trên Validation (`C_FP = 1`):* LOF đạt chi phí thấp nhất ở `10:1` (`256.0`), `20:1` (`460.0`) và `30:1` (`660.0`), trong khi One-Class SVM đạt chi phí thấp hơn ở `50:1` (`1037.0` vs LOF `1060.0`) và `100:1` (`1837.0` vs LOF `2020.0`) nhờ Recall cao hơn (`0.7703` vs `0.7297`). Giá trị F1-max độc lập trên Validation: LOF `0.6667` ($\tau^*=3.163276$), OCSVM `0.4113` ($\tau^*=2.623563$), iForest `0.2282` ($\tau^*=0.656289$).
+
+### Bảng 2: Kết quả Nghiệm thu Độc lập trên Tập Test Niêm phong (`42,722` mẫu, `74` Fraud, ngưỡng đóng băng)
+
+| Mô hình | Test AP (AUPRC) | $\Delta$ AP (Test−Val) | Test ROC-AUC | TP / FP / FN / TN | Test Precision | Test Recall | Test F1 | Test Cost (`30:1`, đơn vị) | $\Delta$ Cost | Latency Test (ms/tx) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Local Outlier Factor (Champion)** | **0.6594** | `+0.0944` | 0.9310 | `55 / 58 / 19 / 42,590` | **0.4867** | **0.7432** | **0.5882** | **628.0** | `-32.0` | `0.0179` *(Cell 8: `0.0175`)* |
+| **One-Class SVM** | 0.3135 | `+0.0620` | 0.9262 | `55 / 181 / 19 / 42,467` | 0.2331 | **0.7432** | 0.3548 | 751.0 | `+46.0` | `0.0152` |
+| **Isolation Forest** | 0.1262 | `+0.0227` | **0.9450** | `40 / 437 / 34 / 42,211` | 0.0839 | 0.5405 | 0.1452 | 1457.0 | `+170.0` | **0.0084** |
+
+* **Kết luận nghiệm thu:** LOF giữ vững ngôi quán quân trên cả Validation và Test với tốc độ tổng quát hóa ổn định (không overfitting): bắt đúng `55/74` giao dịch gian lận (`74.32%`), giảm `3.1x` số báo động nhầm so với OC-SVM (`58` vs `181` FP) và giảm `7.5x` so với Isolation Forest (`58` vs `437` FP), đạt tổng chi phí tổn thất tương đối thấp nhất (`628.0` đơn vị).
+* **Trực quan hóa giảm chiều (Phase 7 trên tập con Validation `5,074` mẫu = `5,000 Normal + 74 Fraud`):** PCA 2D giải thích `40.16%` phương sai tích lũy (`PC1=22.85%`, `PC2=17.30%`); t-SNE (`perplexity=35`, `KL=1.2190`) minh họa rõ cụm hành vi bình thường và phần lớn điểm Fraud tách ra rìa biên, lý giải trực quan vì sao phương pháp mật độ cục bộ LOF vượt trội hơn siêu phẳng toàn cục OC-SVM.
+
+---
+
+## 5. Tiến độ Triển khai & Cấu trúc Dự án
 
 ```text
 DATAMINING/
-├── .github/
-│   └── pull_request_template.md        # Template chuẩn khi tạo Pull Request
 ├── data/
-│   ├── raw/                            # Chứa file creditcard.csv gốc (gitignore)
-│   ├── processed/                      # Lưu train_indices_*.npy; .npz/.csv.gz/.joblib giữ local (gitignore)
-│   └── README.md                       # Hướng dẫn tải dữ liệu từ Kaggle
+│   ├── raw/                  # Đặt creditcard.csv tải từ Kaggle tại đây (gitignored)
+│   └── processed/            # creditcard_preprocessed.npz, preprocessor.joblib, train_indices_*.npy
+├── models/                   # Checkpoint đã huấn luyện (isolation_forest_best, lof_best, ocsvm_best)
 ├── notebooks/
-│   ├── 01_eda_overview.ipynb           # Khám phá phân phối, lệch lớp, KDE V1-V28
-│   ├── 02_preprocessing_pipeline.ipynb # 3-Way Split & RobustScaler chống rò rỉ
-│   ├── 03_isolation_forest.ipynb       # Huấn luyện, đo runtime & trích xuất score iForest
-│   ├── 04_local_outlier_factor.ipynb   # Lấy mẫu N=25k, LOF novelty=True, n_neighbors
-│   ├── 05_one_class_svm.ipynb          # Lấy mẫu N=20k, One-Class SVM RBF, nu, gamma
-│   ├── 06_threshold_tuning_cost.ipynb  # Đối sánh PR-Curve, dịch chuyển ngưỡng & Cost Matrix
-│   └── 07_dimensionality_reduction.ipynb # Trực quan hóa PCA 2D/3D & t-SNE trên Validation
-├── src/
-│   ├── __init__.py
-│   ├── config.py                       # Cấu hình đường dẫn, seed 42, tham số sampling
-│   ├── data_loader.py                  # Module nạp dữ liệu và chia 3 tập Zero-leakage
-│   ├── preprocessor.py                 # Module tiền xử lý với RobustScaler
-│   ├── models.py                       # Wrapper 3 mô hình & hàm đảo dấu score chuẩn mực
-│   └── metrics.py                      # Hàm tính Precision, Recall, F1, AUPRC, Cost
-├── docs/                               # Tài liệu kế hoạch/tracker nội bộ (giữ local, gitignore)
-├── models/                             # Mô hình đã huấn luyện (.joblib) tái tạo cục bộ (gitignore)
+│   ├── 01_eda_overview.ipynb                # Phase 1: EDA, missing, duplicates, tương quan V1-V28
+│   ├── 02_preprocessing_pipeline.ipynb      # Phase 2: Stratified split 70/15/15 & RobustScaler
+│   ├── 03_isolation_forest.ipynb            # Phase 3: Isolation Forest baseline, grid search & dup check
+│   ├── 04_local_outlier_factor.ipynb        # Phase 4: LOF novelty=True, grid search k & dup check
+│   ├── 05_one_class_svm.ipynb               # Phase 5: OC-SVM RBF tuning & support vectors analysis
+│   ├── 06_threshold_tuning_cost.ipynb       # Phase 6: Chuẩn hóa score, exact Cost/F1 thresholds & Champion
+│   ├── 07_dimensionality_reduction.ipynb    # Phase 7: PCA & t-SNE trên Validation (Test vẫn niêm phong)
+│   └── 08_final_test_evaluation.ipynb       # Phase 8: Mở niêm phong Test Set 01 lần duy nhất & nghiệm thu
 ├── reports/
-│   └── figures/                        # Báo cáo CSV/JSON/MD & biểu đồ PNG tái tạo cục bộ (gitignore)
-├── slides/                             # Slide thuyết trình/bài giảng (giữ local, gitignore)
-├── .gitignore                          # Bỏ qua data nặng, venv, cache, checkpoint
-├── requirements.txt                    # Thư viện Python cần cài đặt
-└── README.md                           # Tài liệu hướng dẫn dự án
+│   ├── *.csv, *.json, *.md                  # Bảng kết quả, metadata đóng băng & báo cáo từng pha
+│   └── figures/                             # 17 biểu đồ thực nghiệm chuẩn 300 DPI (01–17)
+├── src/
+│   ├── config.py, data_loader.py, preprocessor.py
+│   └── models.py, metrics.py
+├── slides/                                  # Slide bảo vệ PPTX / PDF (nội bộ, gitignored)
+├── docs/                                    # Kế hoạch, Tracker & Báo cáo kỹ thuật DOCX/PDF (gitignored)
+└── requirements.txt
 ```
 
 ---
 
-## 🚀 Hướng dẫn Cài đặt & Tái lập Kết quả (Quickstart)
+## 6. Hướng dẫn Tái lập Thực nghiệm (Local Reproduction)
 
-### 1. Clone Repository & Thiết lập Môi trường Ảo:
-```bash
-# Clone repository về máy cá nhân
-git clone <URL_REPO_CUA_BAN>
-cd DATAMINING
+> **Lưu ý:** Dữ liệu thô (`creditcard.csv`), mô hình nhị phân (`models/*.joblib`), tệp dữ liệu đã xử lý (`*.npz`) và biểu đồ (`reports/figures/*.png`) được loại trừ khỏi Git qua `.gitignore` để giữ repository gọn nhẹ và tuân thủ bản quyền Kaggle.
 
-# Khởi tạo môi trường ảo Python 3.10+
-python -m venv .venv
-
-# Kích hoạt môi trường ảo:
-# Trên Windows (PowerShell):
-.\.venv\Scripts\Activate.ps1
-# Trên Linux/macOS:
-source .venv/bin/activate
-
-# Nâng cấp pip và cài đặt toàn bộ thư viện:
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 2. Tải Dataset:
-1. Tải file `creditcard.csv` từ [Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud).
-2. Di chuyển file vào thư mục `data/raw/creditcard.csv`.
-
-### 3. Chạy Thực nghiệm trên Jupyter Lab:
-```bash
-jupyter lab
-```
-Khởi chạy lần lượt các Notebook từ `01_eda_overview.ipynb` đến `07_dimensionality_reduction.ipynb`. Mọi bước đều đã cố định `random_state = 42` để đảm bảo kết quả trùng khớp 100%, đồng thời tự động tái tạo các file dữ liệu xử lý (`.npz`/`.csv.gz`/`.joblib`), mô hình (`models/*.joblib`), báo cáo và biểu đồ (`reports/`) ngay trên máy cục bộ.
+1. **Clone repository và tạo môi trường ảo Python 3.12:**
+   ```bash
+   git clone https://github.com/ylc3205/DATAMINING.git
+   cd DATAMINING
+   python -m venv .venv
+   # Windows PowerShell:
+   .\.venv\Scripts\Activate.ps1
+   pip install -r requirements.txt
+   ```
+2. **Chuẩn bị dữ liệu thô:**
+   * Tải bộ dữ liệu *Credit Card Fraud Detection* từ Kaggle (`creditcard.csv`, `284,807` dòng) và đặt vào đường dẫn `data/raw/creditcard.csv`.
+3. **Chạy tuần tự các Jupyter Notebook (`01` → `08`):**
+   * Mở bằng JupyterLab / VS Code với kernel `.venv` và chạy lần lượt từ `notebooks/01_eda_overview.ipynb` đến `notebooks/08_final_test_evaluation.ipynb` để tái tạo toàn bộ phân tách dữ liệu, mô hình đã đóng gói, bảng tổng hợp và 17 biểu đồ thực nghiệm.
 
 ---
 
-## 🌿 Quy trình Phối hợp Nhóm trên Git (Git Workflow)
+## 7. Giới hạn Khoa học & Hướng Phát triển
 
-Nhóm áp dụng mô hình phân nhánh chuẩn để tránh xung đột mã nguồn:
-
-* **Nhánh `main`:** Nhánh chính chứa phiên bản ổn định nhất của mã nguồn và báo cáo. Mọi cập nhật đều thông qua Pull Request (PR) được duyệt chéo.
-* **Nhánh `vinh`:** Nhánh làm việc của Nguyễn Văn Hiển Vinh (Data, Preprocessing, EDA, Visualization).
-* **Nhánh `hoang`:** Nhánh làm việc của Nguyễn Minh Hoàng (Modeling, Tuning, Evaluation, Cost Matrix).
-* **Quy tắc làm việc:**
-  1. Luôn `git pull origin main` trước khi bắt đầu công việc ngày mới.
-  2. Tạo branch hoặc commit trên nhánh cá nhân.
-  3. Mở Pull Request vào `main` kèm checklist trong `.github/pull_request_template.md`.
-  4. Họp Sync 15 phút mỗi ngày vào lúc **21:00** để review code chéo và merge PR.
-
----
-
-## 📈 Hệ thống Chỉ số Đánh giá & Ma trận Chi phí Kinh tế
-
-Do dữ liệu lệch lớp nghiêm trọng (0.172% Fraud), nhóm **tuyệt đối không sử dụng Accuracy** (Accuracy Paradox). Các chỉ số đánh giá cốt lõi:
-
-* **Recall:** Tỷ lệ gian lận phát hiện được: $\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}$ (quan trọng nhất do chi phí bỏ lọt gian lận cực cao).
-* **Precision:** Mức độ chuẩn xác của cảnh báo: $\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}$.
-* **AUPRC:** Diện tích dưới đường cong Precision-Recall, tính toán từ chuỗi Anomaly Score liên tục.
-* **Mô hình Chi phí Kinh tế (Cost-sensitive Function):**
-  $$\text{Total Cost}(\tau) = C_{\text{FN}} \cdot \text{FN}(\tau) + C_{\text{FP}} \cdot \text{FP}(\tau)$$
-  Với giả định chi phí nghiên cứu: $C_{\text{FP}} = 1\text{ USD}$, $C_{\text{FN}}$ được khảo sát độ nhạy ở các mốc $20\text{ USD}$, $30\text{ USD}$, $50\text{ USD}$ để tìm ngưỡng tối ưu $\tau^*$ giảm thiểu tối đa tổn thất tài chính.
-
----
-
-*Học viện Công nghệ Bưu chính Viễn thông — 2026*
+1. **Ma trận chi phí giả định (`C_FP = 1, C_FN = 30`):** Là thước đo chuẩn hóa phục vụ so sánh thuật toán trong phạm vi học thuật (đơn vị chi phí tương đối, không quy đổi thành USD). Trong hệ thống thực tế, tổn thất bỏ sót phụ thuộc trực tiếp vào giá trị giao dịch `Amount`, chi phí hoàn tiền và xử lý khiếu nại.
+2. **Dữ liệu tĩnh & Concept Drift:** Bộ dữ liệu Kaggle phản ánh lát cắt tĩnh trong 2 ngày (2013) với đặc trưng V1–V28 đã ẩn danh qua PCA; chưa mô phỏng biến đổi hành vi theo thời gian (*Concept Drift*) hay thông tin đồ thị/chuỗi giao dịch theo chủ thẻ.
+3. **Giới hạn quy mô & Latency benchmark:** Do độ phức tạp khoảng cách/QP solver, LOF huấn luyện trên mẫu kiểm soát `25,000` giao dịch và OC-SVM trên `20,000` giao dịch; các giá trị độ trễ `< 1 ms/tx` đo trong notebook phản ánh tốc độ chấm điểm batch cục bộ bằng Python/scikit-learn, **không** đại diện cho SLA đầu-cuối của cổng thanh toán ngân hàng.
